@@ -100,9 +100,9 @@ def scn_optimize(context):
     bpy.context.scene.view_settings.view_transform = 'Standard'
 
     bpy.context.scene.use_nodes = True
-    bpy.context.scene.node_tree.use_opencl = True
-    bpy.context.scene.node_tree.edit_quality = 'LOW'
-    bpy.context.scene.node_tree.chunk_size = '256'
+    # bpy.context.scene.node_tree.use_opencl = True
+    # bpy.context.scene.node_tree.edit_quality = 'LOW'
+    # bpy.context.scene.node_tree.chunk_size = '256'
 
     tree = bpy.context.scene.node_tree
     for node in tree.nodes:
@@ -131,6 +131,8 @@ def scn_optimize(context):
     links = tree.links
     link = links.new(scale_node.outputs[0], comp_node.inputs[0])
     link = links.new(scale_node.outputs[0], view_node.inputs[0])
+
+
 
 
 def render_it(context):
@@ -319,6 +321,7 @@ class CompositorviewDiscCache(bpy.types.Operator):
     def execute(self, context):
         try:
             cache_it(context)
+            bpy.ops.image.reload()
             bpy.ops.screen.animation_play()
             return {'FINISHED'}
         except:
