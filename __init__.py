@@ -18,20 +18,20 @@
 
 
 bl_info = {
-    "name": "Compositor Viewer Cache",
-    "description": "Creates Disc Cache and playback in Viewer",
+    "name": "Compositor Disc Cache",
+    "description": "Creates Disc Cache Through VSE for Compositor ",
     "author": "Fahad Hasan Pathik CGVIRUS",
-    "version": (1, 0),
-    "blender": (3, 0, 1),
-    "category": "Image Editor",
-    "doc_url": "https://github.com/cgvirus/Blender-Compositor-Viewer-Cache-Playback-addon",
+    "version": (4, 0),
+    "blender": (2, 40, 0),
+    "category": "Sequencer",
+    "wiki_url": "https://github.com/cgvirus/Blender-Compositor-Disc-Cache-Realtime-Preview-Addon"
     }
 
 import bpy
-from . import Blender_Compositor_Viewer_Cache_Playback_Addon
+from . import Blender_Compositor_Cache_Preview_Addon
 
 
-modules = Blender_Compositor_Viewer_Cache_Playback_Addon
+modules = Blender_Compositor_Cache_Preview_Addon
 
 
 def register():
