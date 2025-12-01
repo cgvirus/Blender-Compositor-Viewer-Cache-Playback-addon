@@ -218,18 +218,16 @@ def render_it(context):
 
     olddisptype = bpy.context.preferences.view.render_display_type
 
-    if  bpy.context.preferences.view.render_display_type != 'NONE':
-        bpy.context.preferences.view.render_display_type = 'NONE'
     
     # Refresh Render View
     bpy.ops.screen.frame_jump(end=False)
 
-    #set frame
-    old_frame_start = scn.frame_start
-    old_frame_end = scn.frame_end
-    old_frame_current = scn.frame_current
 
     def renderinit(context):
+
+        if  bpy.context.preferences.view.render_display_type != 'NONE':
+            bpy.context.preferences.view.render_display_type = 'NONE'
+
         if bpy.context.scene.use_preview_range == True:
             
             scn.frame_start = scn.frame_preview_start
@@ -237,25 +235,15 @@ def render_it(context):
             scn.frame_current = scn.frame_start
             
 
-    def postrender(context):
-        scn.frame_start = old_frame_start
-        scn.frame_end = old_frame_end
-        bpy.context.preferences.view.render_display_type = olddisptype
-
     renderinit(context)
-    bpy.app.handlers.render_post.append(postrender)
     bpy.ops.render.render("INVOKE_DEFAULT", animation=True)
     cache_it(context)
+    bpy.context.preferences.view.render_display_type = olddisptype
 
-    
-    while scn.frame_current == old_frame_current:
-        continue
-    else:
-        bpy.app.handlers.render_post.remove(postrender)
+
 
 def imgdetect(context):
     scn = bpy.context.scene
-    scname = scn.name
     img_formt = str(scn.render.image_settings.file_format)
 
     if img_formt == "JPEG":
@@ -294,9 +282,9 @@ def imgdetect(context):
 
 
     img = cachename+default_place_holder
-    path = filepath + default_place_holder
+    imgpath = filepath + default_place_holder
 
-    return img,path
+    return img,imgpath
 
 
 def cache_it(context):
@@ -308,6 +296,8 @@ def cache_it(context):
 
     if bpy.data.images.get(img):
         loadimg = bpy.data.images[img]
+        if bpy.data.images[img].filepath != imgpath:
+            bpy.data.images[img].filepath = imgpath
     else:
         loadimg = load_image(imgpath, check_existing=True, place_holder=True)
 
@@ -377,8 +367,8 @@ class CompositorviewRenderCache(bpy.types.Operator):
         if bpy.data.is_saved:
             
             cache_it(context)
-            set_viwer_node(context)
             render_it(context)        
+            set_viwer_node(context)
             return {'FINISHED'}
         else:
             self.report({'ERROR'}, 'File not saved!')
