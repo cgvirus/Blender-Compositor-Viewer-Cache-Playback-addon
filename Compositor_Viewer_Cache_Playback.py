@@ -223,6 +223,11 @@ def render_it(context):
     bpy.ops.screen.frame_jump(end=False)
 
 
+    #set frame
+    old_frame_start = scn.frame_start
+    old_frame_end = scn.frame_end
+    old_frame_current = scn.frame_current
+
     def renderinit(context):
 
         if  bpy.context.preferences.view.render_display_type != 'NONE':
@@ -233,12 +238,26 @@ def render_it(context):
             scn.frame_start = scn.frame_preview_start
             scn.frame_end= scn.frame_preview_end
             scn.frame_current = scn.frame_start
+        
+
+    def postrender(context):
+        scn.frame_start = old_frame_start
+        scn.frame_end = old_frame_end
             
 
     renderinit(context)
+    # bpy.app.handlers.render_post.append(postrender)
     bpy.ops.render.render("INVOKE_DEFAULT", animation=True)
     cache_it(context)
     bpy.context.preferences.view.render_display_type = olddisptype
+    postrender(context)
+
+
+
+    # while scn.frame_current == old_frame_current:
+    #     continue
+    # else:
+    #     bpy.app.handlers.render_post.remove(postrender)
 
 
 
@@ -302,10 +321,13 @@ def cache_it(context):
         loadimg = load_image(imgpath, check_existing=True, place_holder=True)
 
 
-    end_frame = bpy.data.scenes[scname].frame_preview_end or \
-                bpy.data.scenes[scname].frame_end
-    start_frame = bpy.data.scenes[scname].frame_preview_start or \
-                bpy.data.scenes[scname].frame_start
+    if bpy.context.scene.use_preview_range == True:
+    
+        end_frame = bpy.data.scenes[scname].frame_preview_end
+        start_frame = bpy.data.scenes[scname].frame_preview_start
+    else:
+        end_frame = bpy.data.scenes[scname].frame_end
+        start_frame = bpy.data.scenes[scname].frame_start
 
 
     bpy.context.area.spaces.active.image = loadimg
