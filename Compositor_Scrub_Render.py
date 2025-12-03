@@ -15,6 +15,8 @@
 import bpy
 import time
 from bpy.types import Panel
+from bpy.app.handlers import persistent
+
 
 
 class SR_props:
@@ -96,6 +98,21 @@ def scrub_render_enable(self, context):
         print ("Scrub disabled")
 
 
+@persistent
+def sr_load_post(dummy):
+    """
+    Restore handler when file is loaded and property was saved checked.
+    (No use of bpy.context — safe for load_post)
+    """
+    try:
+        for sc in bpy.data.scenes:
+            if getattr(sc, "scrub_render_prop", False):
+                print("Scrub Render: Restoring handler after file load.")
+                remove_handler()
+                bpy.app.handlers.frame_change_post.append(schedule_render)
+                break
+    except Exception as e:
+        print("Scrub Render load_post error:", e)
 
 
 #UI
@@ -130,9 +147,15 @@ def register():
         update= scrub_render_enable
         )
     
+    bpy.app.handlers.load_post.append(sr_load_post)
+    
 
 def unregister():
 
+    for h in list(bpy.app.handlers.load_post):
+        if getattr(h, "__name__", "") == "sr_load_post":
+            bpy.app.handlers.load_post.remove(h)
+            
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
     
