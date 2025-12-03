@@ -7,7 +7,7 @@ https://github.com/cgvirus/Blender-Compositor-Viewer-Cache-Playback-addon/releas
 
 # Tutorial:
 
-https://youtu.be/K0vRa0-MmwE
+https://youtu.be/N4m_lXmlYoI?si=gFcJrcm9a_q0SCqz
 
 # Similar Addon using Blender VSE:
 
