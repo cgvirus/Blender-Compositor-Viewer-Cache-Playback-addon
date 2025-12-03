@@ -142,7 +142,7 @@ def register():
 
     bpy.types.Scene.scrub_render_prop = bpy.props.BoolProperty(
         name="Enable Scrub Render",
-        description="A custom checkbox property",
+        description="Auto render the renderlayer while scrubbing",
         default=False,
         update= scrub_render_enable
         )
